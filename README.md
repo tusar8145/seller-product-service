@@ -4,6 +4,32 @@ Enterprise-grade product microservice built to handle **high-traffic, high-concu
 long-running workloads** without overselling, without data loss, and without slowing
 down the request path.
 
+
+  High-level architecture
+  seller-product-service
+  │
+  ├── common/              → Shared DTOs & exception handling
+  │
+  ├── config/              → Infrastructure configuration
+  │   ├── datasource/      → Master/Replica routing
+  │   ├── kafka/           → Kafka producer/consumer
+  │   ├── cache/           → Redis
+  │   └── aws/             → S3
+  │
+  ├── modules/
+  │   ├── product/         → Product CRUD + consistency
+  │   ├── stock/           → Stock management + async workers
+  │   ├── bulk/            → Bulk Excel processing
+  │   ├── kafka/           → Domain events
+  │   └── storage/         → S3 storage
+  │
+  ├── model/               → Shared/domain model
+  │
+  ├── resources/
+  │   └── db/migration/    → Flyway database migrations
+  │
+  └── test/                → Unit + integration/API tests
+
 ---
 
 ## 1. Tech Stack
@@ -50,7 +76,7 @@ down the request path.
   Client → Controller → Redis (reserve/validate atomically)
   → Enqueue async DB sync
   → Return immediately
-  
+
 - Product reads: `GET product:{id}` from Redis (TTL 15 min). Miss → DB replica → backfill.
 - Stock mutations: atomic `DECRBY` / `INCRBY` via Lua, guarded by a per-product lock.
 
@@ -97,10 +123,31 @@ down the request path.
 
 Result: **Available Stock >= 0** is enforced at every layer, even if one layer fails.
 
+
+## 5. Testing
+
+Tests are split into **unit** (`*Test`) and **integration** (`*IT`) suites.
+Unit tests are fast and hermetic; integration tests spin up real infrastructure via Testcontainers.
+
+## 6. Spring Profiles & Environment
+
+The service ships three Spring profiles, each mapping to a deployment target.
+Profile selection is driven by the `SPRING_PROFILES_ACTIVE` env var (default: `dev`).
+
+| Profile | File                        | Purpose                                                       |
+|---------|-----------------------------|---------------------------------------------------------------|
+| `dev`   | `application-dev.yml`       | Local development — verbose SQL, permissive timeouts, hot reload |
+| `prod`  | `application-prod.yml`      | Production — quiet logs, larger Hikari pools, read-only replica |
+| `test`  | `src/test/resources/application-test.yml` | Integration tests — overridden by Testcontainers at runtime |
+
+
 ---
 
-## 10. Run
+## 7. Run
 ```bash
 chmod +x run.sh
 ./run.sh              # dev mode, DevTools hot reload
+mvn test  # test
 
+Locally — override at launch:
+SPRING_PROFILES_ACTIVE=prod java -jar target/seller-product-service-1.0.0.jar

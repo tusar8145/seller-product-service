@@ -1,0 +1,30 @@
+
+bash to run the project
+./run.sh
+
+
+mvn test
+
+
+## TEST ##
+
+# Unit tests only (Docker lage na)
+mvn -U clean test
+
+# Unit + Integration (Docker must be running)
+mvn -U clean verify
+
+# Ekta specific IT
+mvn -U verify -Dit.test=StockApiIT
+
+# Ekta method
+mvn -U verify -Dit.test=StockApiIT#decrement_reserves_inRedis_andSyncsToDb
+
+
+run test
+mvn -U clean verify
+All unit tests	mvn -U clean test
+One unit class	mvn -U test -Dtest=RoutingDataSourceTest
+
+
+

@@ -62,22 +62,6 @@ public class StartupLogger implements ApplicationListener<ApplicationReadyEvent>
         } catch (Exception e) {
             log.error("Kafka connection: FAILED — {}", e.getMessage());
         }
-
-        log.info("\nAvailable endpoints:\n" +
-                 "  POST   /api/v1/products\n" +
-                 "  GET    /api/v1/products/{id}\n" +
-                 "  GET    /api/v1/products/{id}/from-master\n" +
-                 "  GET    /api/v1/products\n" +
-                 "  PUT    /api/v1/products/{id}\n" +
-                 "  DELETE /api/v1/products/{id}\n" +
-                 "  POST   /api/v1/products/{id}/stock\n" +
-                 "  GET    /api/v1/products/{id}/stock/history\n" +
-                 "  POST   /api/v1/products/bulk/import\n" +
-                 "  POST   /api/v1/products/bulk/stock-update\n" +
-                 "  GET    /api/v1/products/bulk/{jobId}\n" +
-                 "  GET    /api/v1/products/bulk/{jobId}/failures-url\n" +
-                 "  GET    /api/v1/products/cache/consistency\n" +
-                 "  GET    /actuator/health\n");
     }
 
     private String line(String ch, int n) { return ch.repeat(n); }
