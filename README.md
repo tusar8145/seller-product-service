@@ -5,32 +5,33 @@ long-running workloads** without overselling, without data loss, and without slo
 down the request path.
 
 
-  High-level architecture
-  seller-product-service
-  │
-  ├── common/              → Shared DTOs & exception handling
-  │
-  ├── config/              → Infrastructure configuration
-  │   ├── datasource/      → Master/Replica routing
-  │   ├── kafka/           → Kafka producer/consumer
-  │   ├── cache/           → Redis
-  │   └── aws/             → S3
-  │
-  ├── modules/
-  │   ├── product/         → Product CRUD + consistency
-  │   ├── stock/           → Stock management + async workers
-  │   ├── bulk/            → Bulk Excel processing
-  │   ├── kafka/           → Domain events
-  │   └── storage/         → S3 storage
-  │
-  ├── model/               → Shared/domain model
-  │
-  ├── resources/
-  │   └── db/migration/    → Flyway database migrations
-  │
-  └── test/                → Unit + integration/API tests
+## High-Level Architecture
 
----
+```text
+seller-product-service
+│
+├── common/              → Shared DTOs & exception handling
+│
+├── config/              → Infrastructure configuration
+│   ├── datasource/      → Master/Replica routing
+│   ├── kafka/           → Kafka producer/consumer
+│   ├── cache/           → Redis
+│   └── aws/             → S3
+│
+├── modules/
+│   ├── product/         → Product CRUD + consistency
+│   ├── stock/           → Stock management + async workers
+│   ├── bulk/            → Bulk Excel processing
+│   ├── kafka/           → Domain events
+│   └── storage/         → S3 storage
+│
+├── model/               → Shared/domain model
+│
+├── resources/
+│   └── db/migration/    → Flyway database migrations
+│
+└── test/                → Unit + integration/API tests
+```
 
 ## 1. Tech Stack
 
