@@ -1,0 +1,63 @@
+spring:
+  application:
+    name: seller-product-service
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc:
+          time_zone: UTC
+          batch_size: 50
+        order_inserts: true
+        order_updates: true
+        batch_versioned_data: true
+    open-in-view: false
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration
+    schemas: public
+
+server:
+  port: ${SERVER_PORT:8081}
+  shutdown: graceful
+  tomcat:
+    threads:
+      max: 200
+      min-spare: 20
+    max-connections: 10000
+    accept-count: 200
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: when-authorized
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /v3/api-docs
+
+kafka:
+  topics:
+    partitions: ${KAFKA_DEFAULT_TOPIC_PARTITION:10}
+
+stock:
+  worker:
+    parallelism: ${STOCK_WORKER_PARALLELISM:8}
+    queue-capacity: ${STOCK_WORKER_QUEUE_CAPACITY:10000}
+    enqueue-timeout-ms: ${STOCK_WORKER_ENQUEUE_TIMEOUT_MS:2000}
+
+logging:
+  level:
+    root: INFO
+    com.enterprise.product: DEBUG
